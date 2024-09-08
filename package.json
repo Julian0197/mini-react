@@ -1,0 +1,22 @@
+{
+	"scripts": {
+		"lint": "eslint --ext .js,.ts,.jsx,.tsx --fix --quiet ./packages",
+		"prepare": "husky"
+	},
+	"devDependencies": {
+		"commitlint": "^17.0.2",
+		"eslint": "^8.17.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-plugin-prettier": "^4.0.0",
+		"husky": "^8.0.3",
+		"js,": "link:@eslint/js,",
+		"prettier": "^2.7.1",
+		"typescript": "^5.5.4",
+		"typescript-eslint": "^8.4.0",
+		"rollup": "^2.75.6",
+		"rollup-plugin-generate-package-json": "^3.2.0",
+		"rollup-plugin-typescript2": "^0.32.1",
+		"@commitlint/cli": "^17.0.2",
+		"@commitlint/config-conventional": "^17.0.2"
+	}
+}
