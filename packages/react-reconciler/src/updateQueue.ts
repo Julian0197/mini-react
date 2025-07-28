@@ -1,0 +1,55 @@
+import { Action } from 'shared/ReactTypes';
+
+// update是状态更新的数据结构，描述从一个状态到另一个状态
+export interface Update<State> {
+	action: Action<State>;
+}
+
+export interface UpdateQueue<state> {
+	shared: {
+		pending: Update<state> | null;
+	};
+}
+
+// 创建update实例
+export const createUpdate = <State>(action: Action<State>) => {
+	return {
+		action
+	};
+};
+
+// 创建更新队列
+export const createUpdateQueue = <Action>() => {
+	return {
+		shared: {
+			pending: null
+		}
+	} as UpdateQueue<Action>;
+};
+
+// 在更新队列中添加update
+export const equeueUpdate = <Action>(
+	updateQueue: UpdateQueue<Action>,
+	update: Update<Action>
+) => {
+	updateQueue.shared.pending = update;
+};
+
+export const processUpdateQueue = <State>(
+	baseState: State, // 初始状态
+	pendingUpdate: Update<State> | null // 待处理的update
+): { memorizedStated: State } => {
+	// 返回处理后的状态
+	const result: ReturnType<typeof processUpdateQueue<State>> = {
+		memorizedStated: baseState
+	};
+
+	if (pendingUpdate !== null) {
+		const action = pendingUpdate.action;
+		if (action instanceof Function) {
+			result.memorizedStated = action(baseState);
+		} else {
+			result.memorizedStated = action;
+		}
+	}
+};
