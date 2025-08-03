@@ -1,9 +1,16 @@
 import { FiberNode, FiberRootNode } from './fiber';
 import { Container } from 'hostConfig';
 import { HostRoot } from './wortTags';
-import { createUpdate, createUpdateQueue, equeueUpdate } from './updateQueue';
+import {
+	createUpdate,
+	createUpdateQueue,
+	equeueUpdate,
+	UpdateQueue
+} from './updateQueue';
 import { ReactElementType } from 'shared/ReactTypes';
+import { scheduleUpdateOnFiber } from './workLoop';
 
+// 创建fiberRootNode根节点: fiberRootNde <-> hostRootFiber
 export function createContainer(container: Container) {
 	const hostRootFiber = new FiberNode(HostRoot, {}, null);
 	const root = new FiberRootNode(container, hostRootFiber);
@@ -11,12 +18,17 @@ export function createContainer(container: Container) {
 	return root;
 }
 
+// 创建update，添加到队列
 export function updateContainer(
 	element: ReactElementType | null,
 	root: FiberRootNode
 ) {
 	const hostRootFiber = root.current;
 	const update = createUpdate<ReactElementType | null>(element);
-	equeueUpdate(hostRootFiber.updateQueue, update);
+	equeueUpdate(
+		hostRootFiber.updateQueue as UpdateQueue<ReactElementType | null>,
+		update
+	);
+	scheduleUpdateOnFiber(hostRootFiber); // 调度更新
 	return element;
 }
