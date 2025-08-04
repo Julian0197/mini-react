@@ -4,11 +4,14 @@ import { HostRoot } from './wortTags';
 import {
 	createUpdate,
 	createUpdateQueue,
-	equeueUpdate,
+	enqueueUpdate,
 	UpdateQueue
 } from './updateQueue';
 import { ReactElementType } from 'shared/ReactTypes';
 import { scheduleUpdateOnFiber } from './workLoop';
+
+// createRoot(root).render(<App />);
+// createContainer() → updateContainer() → 首次渲染
 
 // 创建fiberRootNode根节点: fiberRootNde <-> hostRootFiber
 export function createContainer(container: Container) {
@@ -25,7 +28,7 @@ export function updateContainer(
 ) {
 	const hostRootFiber = root.current;
 	const update = createUpdate<ReactElementType | null>(element);
-	equeueUpdate(
+	enqueueUpdate(
 		hostRootFiber.updateQueue as UpdateQueue<ReactElementType | null>,
 		update
 	);

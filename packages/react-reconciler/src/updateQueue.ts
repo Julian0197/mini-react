@@ -29,7 +29,7 @@ export const createUpdateQueue = <Action>() => {
 };
 
 // 在更新队列中添加update
-export const equeueUpdate = <Action>(
+export const enqueueUpdate = <Action>(
 	updateQueue: UpdateQueue<Action>,
 	update: Update<Action>
 ) => {
@@ -50,6 +50,7 @@ export const processUpdateQueue = <State>(
 		if (action instanceof Function) {
 			result.memorizedStated = action(baseState);
 		} else {
+			// 比如hostroot的update是ReactElementType
 			result.memorizedStated = action;
 		}
 	}
