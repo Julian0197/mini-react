@@ -4,6 +4,7 @@ import { ReactElementType } from 'shared/ReactTypes';
 import { FiberNode } from './fiber';
 import { HostComponent, HostRoot, HostText } from './wortTags';
 import { processUpdateQueue, UpdateQueue } from './updateQueue';
+import { reconcileChildFibers, mountChildFibers } from './childFibers';
 
 // react element和fibernode比较，返回子fiberNode
 export const beginWork = (wip: FiberNode) => {
@@ -11,7 +12,7 @@ export const beginWork = (wip: FiberNode) => {
 		case HostRoot:
 			return updateHostRoot(wip);
 		case HostComponent:
-			return null;
+			return updateHostComponent(wip);
 		case HostText:
 			return null;
 		default:
@@ -32,7 +33,27 @@ function updateHostRoot(wip: FiberNode) {
 	wip.memoizedState = memorizedStated;
 
 	const nextChildren = wip.memoizedState;
-	// 对比子 current FiberNode和子 element，生成workinprogress fibernode
 	reconcileChildren(wip, nextChildren);
 	return wip.child;
+}
+
+function updateHostComponent(wip: FiberNode) {
+	// pendingProps.children是jsx编译后的 react element tree
+	const nextProps = wip.pendingProps;
+	const nextChildren = nextProps.children;
+	reconcileChildren(wip, nextChildren);
+	return wip.child;
+}
+
+// 对比子 current FiberNode和子 element，生成workinprogress fibernode
+function reconcileChildren(wip: FiberNode, children?: ReactElementType | null) {
+	const current = wip.alternate;
+
+	if (current !== null) {
+		// update
+		wip.child = reconcileChildFibers(wip, current.child, children);
+	} else {
+		// mount
+		wip.child = mountChildFibers(wip, null, children);
+	}
 }
