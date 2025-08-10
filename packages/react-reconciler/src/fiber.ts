@@ -22,6 +22,7 @@ export class FiberNode {
 	updateQueue: UpdateQueue<ReactElementType | null> | null; // 更新队列
 	alternate: FiberNode | null; // 备份fiberNode，用于切换curren tree 和 workInProgress tree
 	flags: Flags; // 标记fiberNode的状态，比如更新、删除等
+	subtreeFlags: Flags; // 标记fiberNode的子树的状态，比如更新、删除等
 
 	constructor(tag: WorkTag, pendingProps: Props, key: Key) {
 		this.tag = tag;
@@ -44,6 +45,7 @@ export class FiberNode {
 		this.updateQueue = null;
 		this.alternate = null;
 		this.flags = NoFlags;
+		this.subtreeFlags = NoFlags;
 	}
 }
 
