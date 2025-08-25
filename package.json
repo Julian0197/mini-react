@@ -2,11 +2,12 @@
 	"scripts": {
 		"lint": "eslint --ext .js,.ts,.jsx,.tsx --fix --quiet ./packages",
 		"prepare": "husky",
-		"build:dev": "rimraf dist && rollup --config scripts/rollup/react.config.js"
+		"build:dev": "rimraf dist && rollup --config scripts/rollup/dev.config.js"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^17.0.2",
 		"@commitlint/config-conventional": "^17.0.2",
+		"@rollup/plugin-alias": "^5.1.1",
 		"@rollup/plugin-commonjs": "^28.0.3",
 		"@rollup/plugin-replace": "^6.0.2",
 		"commitlint": "^17.0.2",

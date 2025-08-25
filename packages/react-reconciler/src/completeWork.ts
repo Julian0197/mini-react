@@ -5,7 +5,8 @@
 import {
 	appendInitialChild,
 	createInstance,
-	createTextInstance
+	createTextInstance,
+	Instance
 } from 'hostConfig';
 import { FiberNode } from './fiber';
 import { HostComponent, HostRoot, HostText } from './wortTags';
@@ -52,7 +53,7 @@ export const completeWork = (wip: FiberNode) => {
 };
 
 // TODO: parent是DOM元素
-function appendAllChildren(parent: FiberNode, wip: FiberNode) {
+function appendAllChildren(parent: Instance, wip: FiberNode) {
 	let node = wip.child;
 	while (node !== null) {
 		if (node.tag === HostComponent || node.tag === HostText) {

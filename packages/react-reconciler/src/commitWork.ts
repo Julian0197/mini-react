@@ -1,5 +1,7 @@
+import { appendChildToContainer, Container } from 'hostConfig';
 import { FiberNode } from './fiber';
 import { MutationMask, NoFlags, Placement } from './fiberFlags';
+import { HostComponent, HostRoot, HostText } from './wortTags';
 
 let nextEffect: FiberNode | null = null;
 
@@ -47,6 +49,51 @@ const commmitPlacement = (finishedWork: FiberNode) => {
 	if (__DEV__) {
 		console.warn('执行Placement', finishedWork);
 	}
+
+	// parent DOM
+	const hostParent = getHostParent(finishedWork);
+
+	// 插入到 parent DOM
+	if (hostParent !== null) {
+		appendPlacementNodeIntoContainer(finishedWork, hostParent);
+	}
 };
 
-function getHostParent(fiber: FiberNode) {}
+function getHostParent(fiber: FiberNode): Container | null {
+	let parent = fiber.return;
+
+	while (parent) {
+		const parentTag = parent.tag;
+		if (parentTag === HostComponent) {
+			return parent.stateNode;
+		}
+		if (parentTag === HostRoot) {
+			return parent.stateNode.container;
+		}
+		parent = parent.return;
+	}
+	if (__DEV__) {
+		console.warn('未找到HostParent', fiber);
+	}
+	return null;
+}
+
+function appendPlacementNodeIntoContainer(
+	finishedWork: FiberNode,
+	hostParent: Container
+) {
+	if (finishedWork.tag === HostComponent || finishedWork.tag === HostText) {
+		appendChildToContainer(finishedWork.stateNode, hostParent);
+		return;
+	}
+
+	const child = finishedWork.child;
+	if (child !== null) {
+		appendPlacementNodeIntoContainer(child, hostParent);
+		let sibling = child.sibling;
+		while (sibling !== null) {
+			appendPlacementNodeIntoContainer(sibling, hostParent);
+			sibling = sibling.sibling;
+		}
+	}
+}
